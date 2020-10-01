@@ -1,0 +1,63 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #drawer
+    class="sidenav"
+    fixedInViewport
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+  >
+    <mat-toolbar>Menu</mat-toolbar>
+
+    <mat-form-field *ngIf="orders" style="padding: 1em">
+      <mat-label>Select Order</mat-label>
+      <mat-select [(ngModel)]="selectedorder">
+        <mat-option
+          *ngFor="let order of orders['bulkOrders']"
+          [value]="order._id"
+        >
+          {{ order.name }}
+        </mat-option>
+        <!-- {{ orders['bulkOrders'] | json}} -->
+      </mat-select>
+    </mat-form-field>
+    <!-- <mat-nav-list>
+      <a
+        (click)="drawer.toggle()"
+        [disabled]="!selectedorder"
+        *ngFor="let item of navList"
+        mat-list-item
+        [routerLink]="[item.path, selectedorder]"
+        >{{ item.name }}</a
+      >
+      <a (click)="drawer.toggle()" mat-list-item routerLink="/admin/addOrder"
+        >Add Order</a
+      >
+    </mat-nav-list> -->
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="loggedIn && loggedIn.role == 'admin'"
+      >
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>Tripaxy Chat</span>
+      <span class="example-fill-remaining-space"></span>
+      <span *ngIf="loggedIn" mat-button>
+        Hi,
+        {{
+          loggedIn.name ||
+            loggedIn.email.substring(0, loggedIn.email.indexOf("@"))
+        }}</span
+      >
+      <button *ngIf="loggedIn" mat-button (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </mat-toolbar>
+    <ng-content> </ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,107 @@
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <p class="display-4 text-center">CHAT SECTION</p>
+        <mat-tab-group
+          mat-stretch-tabs
+          class="example-stretched-tabs mat-elevation-z4"
+          color="accent"
+          backgroundColor="primary"
+        >
+          <mat-tab label="Login">
+            <form [formGroup]="loginForm">
+              <div class="form-group py-2 px-3">
+                <label for="email">Email</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  aria-describedby="helpId"
+                  formControlName="email"
+                />
+                <small id="helpId" class="text-muted">Enter Email</small>
+              </div>
+              <div class="form-group py-2 px-3">
+                <label for="password">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  aria-describedby="helpId2"
+                  formControlName="password"
+                />
+                <small id="helpId2" class="text-muted">Enter Password</small>
+              </div>
+              <div class="py-2 px-3">
+                <button
+                  (click)="loginUser(loginForm.value)"
+                  mat-raised-button
+                  color="primary"
+                  style="width: 100%"
+                  [disabled]="!loginForm.valid"
+                >
+                  LOG IN
+                </button>
+              </div>
+            </form>
+          </mat-tab>
+          <mat-tab label="Register">
+            <form [formGroup]="registerForm">
+              <div class="form-group py-1 px-3">
+                <label for="name">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  aria-describedby="helpId"
+                  formControlName="name"
+                />
+                <small id="helpId" class="text-muted">Enter Name</small>
+              </div>
+              <div class="form-group py-1 px-3">
+                <label for="email">Email</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  aria-describedby="helpId"
+                  formControlName="email"
+                />
+                <small id="helpId" class="text-muted">Enter Email</small>
+              </div>
+              <div class="form-group py-1 px-3">
+                <label for="password">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  aria-describedby="helpId2"
+                  formControlName="password"
+                />
+                <small id="helpId2" class="text-muted">Enter Password</small>
+              </div>
+              <div class="form-group px-3">
+                  <mat-checkbox formControlName="isManager">Check if Manager</mat-checkbox>
+              </div>
+              <div class="py-2 px-3">
+                <button
+                  (click)="registerUser(registerForm.value)"
+                  mat-raised-button
+                  color="primary"
+                  style="width: 100%"
+                  [disabled]="!registerForm.valid"
+                >
+                  SIGN UP
+                </button>
+              </div>
+            </form>
+          </mat-tab>
+        </mat-tab-group>
+        <hr />
+        <div *ngIf="formError" class="alert alert-danger">
+          {{ formError }}
+        </div>
+        <mat-progress-bar
+          *ngIf="loading"
+          mode="indeterminate"
+        ></mat-progress-bar>
+      </div>
+    </div>
+  </div>
+</div>

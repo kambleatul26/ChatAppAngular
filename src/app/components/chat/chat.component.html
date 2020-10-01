@@ -1,0 +1,103 @@
+<div class="chat-container">
+  <main class="chat-main">
+    <div class="chat-sidebar">
+    <h3><i class="fas fa-users"></i> Users</h3>
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Managers </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-list>
+            <ng-container *ngFor="let user of users">
+            <button mat-button (click)="openChat(user)" style="width: 100%;" *ngIf="user.isManager == true">
+              <mat-list-item [class.is-active]='user._id == selectedUser._id'>
+                <mat-icon
+                  [matBadge]="user.newMessages > 0 ? user.newMessages : null"
+                  matBadgeColor="primary"
+                  mat-list-icon
+                  >message</mat-icon
+                >
+                <div mat-line>{{ user.name }}</div>
+                <!-- <div mat-line> {{folder.updated | date}} </div> -->
+              </mat-list-item>
+            </button>
+            </ng-container>
+          </mat-list>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Customers </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-list>
+            <ng-container *ngFor="let user of users">
+              <button mat-button (click)="openChat(user)" style="width: 100%;" *ngIf="user.isManager == false">
+                <mat-list-item [class.is-active]='user._id == selectedUser._id'>
+                <mat-icon
+                  [matBadge]="user.newMessages > 0 ? user.newMessages : null"
+                  matBadgeColor="primary"
+                  mat-list-icon
+                  >message</mat-icon
+                >
+                <div mat-line>{{ user.name }}</div>
+                <!-- <div mat-line> {{folder.updated | date}} </div> -->
+              </mat-list-item>
+              </button>
+            </ng-container>
+          </mat-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="chat-messages">
+      <mat-toolbar color="primary" class="pl-3">
+        <span>{{ selectedUser.name }}</span>
+        <!-- <span class="example-spacer"></span>
+        <button
+          mat-icon-button
+          class="example-icon favorite-icon"
+          aria-label="Example icon-button with heart icon"
+        >
+          <mat-icon>favorite</mat-icon>
+        </button> -->
+      </mat-toolbar>
+      <div
+        *ngFor="let m of selectedUser.messages"
+        class="message"
+        [class.sent]="m.sender == myDetails.id"
+      >
+        <p class="meta">
+          {{ m.sender == myDetails.id ? myDetails.name : selectedUser.name }}
+          <span>{{
+            m.timeStamp.toLocaleString("en-US", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true
+            })
+          }}</span>
+        </p>
+        <p class="text">
+          {{ m.message }}
+        </p>
+      </div>
+    </div>
+  </main>
+  <div class="chat-form-container">
+    <input
+      style="width: 62%; margin-left: 27%"
+      id="msg"
+      type="text"
+      placeholder="Enter Message"
+      required
+      autocomplete="off"
+      [(ngModel)]="msg"
+    />
+    <button
+      style="width: 10%; height: 50px; margin-left: 1%"
+      [disabled]="msg == null || msg.length == 0 || !selectedUser"
+      color="primary"
+      (click)="sendMsg()"
+      mat-raised-button
+    >
+      <i class="fas fa-paper-plane"></i> Send
+    </button>
+  </div>
+</div>
