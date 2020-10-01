@@ -1,15 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Component, Directive, OnInit, HostListener } from '@angular/core';
-
-@Directive({
-  selector: '[appClickHandler]'
-})
-export class ClickHandlerDirective {
-
-   @HostListener('click', ['$event']) log(e){
-    console.log(e)
-  }
-}
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-chat',
@@ -22,29 +12,32 @@ export class ChatComponent implements OnInit {
   TOKEN_KEY = 'auth-token';
   myDetails = JSON.parse(localStorage.getItem(this.TOKEN_KEY));
   msg = null;
+  roomId = null;
 
-  selectedUser = {
-    _id: '5f75b47fc8a3c5321e0516ed',
-    name: 'Shubham',
-    messages: [
-      {
-        sender: '5f743d9d92eb67a59f7fe9fc',
-        message: 'Hii Mann',
-        timeStamp: new Date()
-      },
-      {
-        sender: '5f743d9d92eb67a59f7fe9fc',
-        message: 'Where are you',
-        timeStamp: new Date()
-      },
-      {
-        sender: '5f75b47fc8a3c5321e0516ed',
-        message: 'Reaching in 5',
-        timeStamp: new Date()
-      }
-    ],
-    newMessages: 2
-  }
+  // selectedUser = {
+  //   _id: '5f75b47fc8a3c5321e0516ed',
+  //   name: 'Shubham',
+  //   messages: [
+  //     {
+  //       sender: '5f743d9d92eb67a59f7fe9fc',
+  //       message: 'Hii Mann',
+  //       timeStamp: new Date()
+  //     },
+  //     {
+  //       sender: '5f743d9d92eb67a59f7fe9fc',
+  //       message: 'Where are you',
+  //       timeStamp: new Date()
+  //     },
+  //     {
+  //       sender: '5f75b47fc8a3c5321e0516ed',
+  //       message: 'Reaching in 5',
+  //       timeStamp: new Date()
+  //     }
+  //   ],
+  //   newMessages: 2
+  // }
+
+  selectedUser = null
 
   users = [
     {
@@ -73,17 +66,53 @@ export class ChatComponent implements OnInit {
         this.users = res['users'];
         console.log(this.users);
       });
+
+    // this.dataS.getMsgIncoming()
+    //   .subscribe(msg => {
+    //     console.log(msg);
+    //     if(msg != null) {
+    //       let index = this.users.findIndex(u => u._id == msg.sender);
+    //       this.users[index].messages.push(msg);  
+    //     }
+    //   })
+    
+    this.dataS.msgIncoming.subscribe(msg => {
+      msg = JSON.parse(msg);
+      msg.timeStamp = new Date(msg.timeStamp);
+      console.log(msg);
+      if(msg != null) {
+        let index = this.users.findIndex(u => u._id == msg.sender);
+        this.users[index].messages.push(msg);
+        this.users[index].newMessages++;
+      }
+    })
   }
 
   sendMsg() {
-    
+    let Msg = {
+      sender: this.myDetails.id,
+      timeStamp: new Date(),
+      message: this.msg,
+      roomId: this.roomId,
+      receiver: this.selectedUser._id
+    };
+    this.dataS.sendMessage(Msg);
+    this.selectedUser.messages.push({
+      sender: Msg.sender,
+      timeStamp: Msg.timeStamp,
+      message: Msg.message,
+    });
+    this.msg = null;
   }
 
   openChat(user) {
     this.dataS.createOpenRoom(user._id)
       .subscribe(res => {
         console.log(res);
+        this.roomId = res['roomId'];
+        console.log(this.roomId);
         this.selectedUser = user;
+        this.selectedUser.newMessages = 0;
       }, err => {
         console.log(err);
       })

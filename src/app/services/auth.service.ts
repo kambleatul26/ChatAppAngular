@@ -32,6 +32,7 @@ export class AuthService {
     if (usr) {
       this.authenticationState.next(usr);
       this.router.navigate(['chat']);
+      this.data.setupSocket(usr['id']);
       // if (usr && usr['role'] == "user") {
 
       // } else {

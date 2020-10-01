@@ -36,6 +36,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptorService } from './services/token-interceptor.service';
 
+// SOCKET CONFIG
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+const config: SocketIoConfig = { url: 'http://localhost:3000/', options: {} };
+// const config: SocketIoConfig = { url: 'https://radiant-taiga-65001.herokuapp.com/', options: {} };
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -47,6 +53,7 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    SocketIoModule.forRoot(config),
     LayoutModule,
     MatToolbarModule,
     MatButtonModule,
@@ -72,7 +79,7 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     MatProgressSpinnerModule,
     MatDialogModule,
     MatCheckboxModule,
-    MatExpansionModule
+    MatExpansionModule,
   ],
   providers: [
     {

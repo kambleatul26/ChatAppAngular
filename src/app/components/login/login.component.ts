@@ -57,6 +57,7 @@ export class LoginComponent implements OnInit {
           this.auth.authenticationState.next(user);
           localStorage.setItem(TOKEN_KEY, JSON.stringify(user));
           this.router.navigate(['chat']);
+          this.data.setupSocket(user['id']);
         }, 100);
       }, err => {
         setTimeout(() => {

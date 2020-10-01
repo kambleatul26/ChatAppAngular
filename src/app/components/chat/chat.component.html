@@ -10,7 +10,7 @@
           <mat-list>
             <ng-container *ngFor="let user of users">
             <button mat-button (click)="openChat(user)" style="width: 100%;" *ngIf="user.isManager == true">
-              <mat-list-item [class.is-active]='user._id == selectedUser._id'>
+              <mat-list-item [class.is-active]='selectedUser && user._id == selectedUser._id'>
                 <mat-icon
                   [matBadge]="user.newMessages > 0 ? user.newMessages : null"
                   matBadgeColor="primary"
@@ -31,7 +31,7 @@
           <mat-list>
             <ng-container *ngFor="let user of users">
               <button mat-button (click)="openChat(user)" style="width: 100%;" *ngIf="user.isManager == false">
-                <mat-list-item [class.is-active]='user._id == selectedUser._id'>
+                <mat-list-item [class.is-active]='selectedUser && user._id == selectedUser._id'>
                 <mat-icon
                   [matBadge]="user.newMessages > 0 ? user.newMessages : null"
                   matBadgeColor="primary"
@@ -47,7 +47,7 @@
         </mat-expansion-panel>
       </mat-accordion>
     </div>
-    <div class="chat-messages">
+    <div *ngIf="selectedUser"  class="chat-messages">
       <mat-toolbar color="primary" class="pl-3">
         <span>{{ selectedUser.name }}</span>
         <!-- <span class="example-spacer"></span>
@@ -80,7 +80,7 @@
       </div>
     </div>
   </main>
-  <div class="chat-form-container">
+  <div class="chat-form-container" *ngIf="selectedUser" >
     <input
       style="width: 62%; margin-left: 27%"
       id="msg"
@@ -89,6 +89,7 @@
       required
       autocomplete="off"
       [(ngModel)]="msg"
+      (keydown.enter)="sendMsg()"
     />
     <button
       style="width: 10%; height: 50px; margin-left: 1%"
