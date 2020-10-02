@@ -16,11 +16,7 @@ export class DataService {
     private _snackBar: MatSnackBar,
     private http: HttpClient,
     private socket: Socket
-  ) {
-    this.socket.on('connection', data => {
-      console.log('H');
-    });
-  }
+  ) { }
 
   setupSocket(id) {
     this.msgIncoming = this.socket.fromEvent(id);
@@ -44,5 +40,13 @@ export class DataService {
 
   sendMessage(Msg) {
     this.socket.emit('sendMessage', JSON.stringify(Msg));
+  }
+
+  deleteMsg(Msg, roomId, receiver) {
+    this.socket.emit('deleteMessage', JSON.stringify({
+      Msg,
+      roomId,
+      receiver
+    }));
   }
 }
