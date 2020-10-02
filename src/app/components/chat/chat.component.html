@@ -47,18 +47,21 @@
         </mat-expansion-panel>
       </mat-accordion>
     </div>
-    <div *ngIf="selectedUser"  class="chat-messages">
-      <mat-toolbar color="primary" class="pl-3">
-        <span>{{ selectedUser.name }}</span>
-        <!-- <span class="example-spacer"></span>
-        <button
-          mat-icon-button
-          class="example-icon favorite-icon"
-          aria-label="Example icon-button with heart icon"
-        >
-          <mat-icon>favorite</mat-icon>
-        </button> -->
-      </mat-toolbar>
+    <div *ngIf="selectedUser" class="chat-messages" #chatBox>
+      <div class="toolbar">
+        <mat-toolbar color="primary" class="pl-3 pr-3">
+          <span>{{ selectedUser.name }}</span>
+          <span class="example-spacer"></span>
+          <button [disabled]='true'
+            mat-icon-button
+            class="example-icon favorite-icon"
+            aria-label="Example icon-button with heart icon"
+          >
+            <mat-icon style="font-size:xx-large;" [ngClass]="(onlineFlag==true)?'online':'offline'">online_prediction</mat-icon>
+          </button>
+        </mat-toolbar>
+      </div>
+      <div style="height: 10vh;"></div>
       <div
         *ngFor="let m of selectedUser.messages"
         class="message"
@@ -81,8 +84,10 @@
     </div>
   </main>
   <div class="chat-form-container" *ngIf="selectedUser" >
+    <button mat-button style="margin-left: 25%" (click) ="toggleEmojiPicker()"><h2>😀</h2></button>
+    <emoji-mart [style]="{ position: 'absolute', bottom: '18vh', right: '82vh' }" class="emoji-mart" set="{{set}}" *ngIf="showEmojiPicker" (emojiSelect)="addEmoji($event)" title="Pick Emoji"></emoji-mart>
     <input
-      style="width: 62%; margin-left: 27%"
+      style="width: 55%; margin-left: 1%"
       id="msg"
       type="text"
       placeholder="Enter Message"

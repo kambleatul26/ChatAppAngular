@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.auth.loginUser(loginDetails)
       .subscribe(res => {
-        console.log(res);
+        // console.log(res);
         setTimeout(() => {
           this.loading = false;
           user.token = res['token'];
@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.auth.signUp(registerDetails)
       .subscribe(res => {
-        console.log(res);
+        // console.log(res);
         setTimeout(() => {
           this.loading = false;
           this.data.showAlert('Login with your credentials', 'Okay!');

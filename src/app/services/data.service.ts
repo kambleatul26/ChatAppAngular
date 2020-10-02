@@ -1,4 +1,3 @@
-import { BehaviorSubject } from 'rxjs';
 import { environment } from './../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -11,6 +10,7 @@ import { Socket } from 'ngx-socket-io';
 export class DataService {
 
   msgIncoming;
+  id;
 
   constructor(
     private _snackBar: MatSnackBar,
@@ -19,6 +19,7 @@ export class DataService {
   ) { }
 
   setupSocket(id) {
+    this.id = id;
     this.msgIncoming = this.socket.fromEvent(id);
   }
 
@@ -48,5 +49,16 @@ export class DataService {
       roomId,
       receiver
     }));
+  }
+
+  onlineStatusReq(sender, receiver) {
+    this.socket.emit('checkOnline', JSON.stringify({
+      sender,
+      receiver
+    }));
+  }
+
+  onlineStatusRes(sender) {
+    this.socket.emit('responseCheckOnline', sender);
   }
 }

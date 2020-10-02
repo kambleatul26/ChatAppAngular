@@ -1,6 +1,7 @@
+import { interval } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataService } from 'src/app/services/data.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-chat',
@@ -10,35 +11,18 @@ import { Component, OnInit } from '@angular/core';
 
 export class ChatComponent implements OnInit {
 
+  @ViewChild('chatBox') chatBox; 
+
   TOKEN_KEY = 'auth-token';
   myDetails = JSON.parse(localStorage.getItem(this.TOKEN_KEY));
   msg = null;
   roomId = null;
-
-  // selectedUser = {
-  //   _id: '5f75b47fc8a3c5321e0516ed',
-  //   name: 'Shubham',
-  //   messages: [
-  //     {
-  //       sender: '5f743d9d92eb67a59f7fe9fc',
-  //       message: 'Hii Mann',
-  //       timeStamp: new Date()
-  //     },
-  //     {
-  //       sender: '5f743d9d92eb67a59f7fe9fc',
-  //       message: 'Where are you',
-  //       timeStamp: new Date()
-  //     },
-  //     {
-  //       sender: '5f75b47fc8a3c5321e0516ed',
-  //       message: 'Reaching in 5',
-  //       timeStamp: new Date()
-  //     }
-  //   ],
-  //   newMessages: 2
-  // }
+  
+  onlineFlag = false;
+  onlineSub;
 
   selectedUser = null
+  msgIncomingSub;
 
   users = JSON.parse(localStorage.getItem('users'));
 
@@ -46,6 +30,15 @@ export class ChatComponent implements OnInit {
     private dataS: DataService,
     private _snackBar: MatSnackBar,
   ) {
+
+    this.onlineSub = interval(1000)
+                      .subscribe(() => {
+                        if(this.selectedUser != null) {
+                          this.onlineFlag = false;
+                          this.dataS.onlineStatusReq(this.myDetails.id, this.selectedUser._id);
+                        }
+                      });
+
     this.dataS.getUsers()
       .subscribe(res => {
         res['users'].forEach(val => {
@@ -63,23 +56,21 @@ export class ChatComponent implements OnInit {
         });
         this.users = res['users'];
         localStorage.setItem('users', JSON.stringify(this.users));
-        console.log(this.users);
+        // console.log(this.users);
       });
-
-    // this.dataS.getMsgIncoming()
-    //   .subscribe(msg => {
-    //     console.log(msg);
-    //     if(msg != null) {
-    //       let index = this.users.findIndex(u => u._id == msg.sender);
-    //       this.users[index].messages.push(msg);  
-    //     }
-    //   })
     
-    this.dataS.msgIncoming.subscribe(msg => {
+    this.msgIncomingSub = this.dataS.msgIncoming.subscribe(msg => {
       msg = JSON.parse(msg);
-      console.log(msg);
+      // console.log(msg);
+      if(msg.onlineStatusReq == true) {
+        this.dataS.onlineStatusRes(msg.sender);
+        return;
+      }
+      if(msg.onlineStatusRes == true) {
+        this.onlineFlag = true;
+        return;
+      }
       if(msg.delete == true) {
-        console.log('H')
         let index = this.users.findIndex(u => u._id == msg.Msg.sender);
         this.users[index].messages = this.users[index].messages.filter(m => msg.Msg.timeStamp != m.timeStamp);
         return;
@@ -109,16 +100,19 @@ export class ChatComponent implements OnInit {
       message: Msg.message,
     });
     this.msg = null;
+
+    this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight;
   }
 
   openChat(user) {
+    this.onlineFlag = false;
     this.dataS.createOpenRoom(user._id)
       .subscribe(res => {
-        console.log(res);
+        // console.log(res);
         this.roomId = res['roomId'];
-        console.log(this.roomId);
         this.selectedUser = user;
         this.selectedUser.newMessages = 0;
+        this.dataS.onlineStatusReq(this.myDetails.id, this.selectedUser._id);
       }, err => {
         console.log(err);
       })
@@ -134,7 +128,7 @@ export class ChatComponent implements OnInit {
     });
 
     sb.onAction().subscribe(() => {
-      console.log('The snack-bar action was triggered!');
+      // console.log('The snack-bar action was triggered!');
       this.selectedUser.messages = this.selectedUser.messages.filter(m => m.timeStamp != Msg.timeStamp);
       this.dataS.deleteMsg(Msg, roomId, receiver);
       return true;
@@ -145,7 +139,34 @@ export class ChatComponent implements OnInit {
     return new Date(date);
   }
 
+  showEmojiPicker = false;
+  sets = [
+    'native',
+    'google',
+    'twitter',
+    'facebook',
+    'emojione',
+    'apple',
+    'messenger'
+  ]
+  set = 'apple';
+  toggleEmojiPicker() {
+    console.log(this.showEmojiPicker);
+        this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  addEmoji(event) {
+    console.log(event)
+    this.msg = (this.msg != null) ? this.msg + event.emoji.native : event.emoji.native;
+    console.log(this.msg);
+  }
+
   ngOnInit(): void {
+  }
+
+  ngOnDestroy() {
+    this.msgIncomingSub.unsubscribe();
+    this.onlineSub.unsubscribe();
   }
 
 }

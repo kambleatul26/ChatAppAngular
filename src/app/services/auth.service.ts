@@ -53,7 +53,7 @@ export class AuthService {
       email,
       password
     }).pipe(take(1), map(value => {
-      console.log(value);
+      // console.log(value);
       return value;
     }));
   }
@@ -71,7 +71,7 @@ export class AuthService {
       password,
       isManager
     }).pipe(take(1), map(value => {
-      console.log(value);
+      // console.log(value);
       return value;
     }));
   }

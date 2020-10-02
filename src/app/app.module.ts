@@ -41,6 +41,8 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 const config: SocketIoConfig = { url: 'http://localhost:3000/', options: {} };
 // const config: SocketIoConfig = { url: 'https://radiant-taiga-65001.herokuapp.com/', options: {} };
 
+// EMOJI PICKER
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 @NgModule({
   declarations: [
@@ -80,6 +82,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000/', options: {} };
     MatDialogModule,
     MatCheckboxModule,
     MatExpansionModule,
+    PickerModule
   ],
   providers: [
     {

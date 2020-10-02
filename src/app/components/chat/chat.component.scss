@@ -86,7 +86,7 @@ a {
 }
 
 .chat-messages {
-	padding: 30px;
+	padding: 0 30px;
 	max-height: 500px;
 	overflow-y: scroll;
 }
@@ -203,4 +203,19 @@ a {
 .is-active {
 	background-color: #673AB7 !important;
 	color: white !important;
+}
+
+.online {
+	color: yellow !important;
+}
+
+.offline {
+	color: red !important;
+}
+
+.toolbar {
+	background-color: #c0c0c0;
+    position: fixed;
+    width:104vh;
+	z-index:100;
 }
